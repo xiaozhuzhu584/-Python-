@@ -23,6 +23,7 @@ jobs:
         with:
           channel: 'stable'
           architecture: x64
+          flutter-version: '3.24.0'
       
       - name: Accept Android licenses
         run: yes | flutter doctor --android-licenses || true
@@ -30,17 +31,22 @@ jobs:
       - name: Install Flet
         run: pip install flet flet-cli
       
+      - name: Set Flet auto-accept
+        run: echo "FLET_CLI_AUTO_ACCEPT=1" >> $GITHUB_ENV
+      
       - name: Check files
         run: |
           echo "=== 文件列表 ==="
           ls -la
           echo "=== Flet 版本 ==="
           flet --version
+          echo "=== Flutter 版本 ==="
+          flutter --version
       
       - name: Build APK
         run: |
           echo "=== 开始构建 ==="
-          flet build apk
+          yes | flet build apk
           echo "=== 构建完成 ==="
       
       - name: Upload APK
