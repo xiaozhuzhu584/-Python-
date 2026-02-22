@@ -28,16 +28,31 @@ jobs:
         run: yes | flutter doctor --android-licenses || true
       
       - name: Install Flet
-        run: pip install flet
+        run: pip install flet flet-cli
       
-      - name: Check main.py exists
-        run: ls -la
+      - name: Check files
+        run: |
+          echo "=== 文件列表 ==="
+          ls -la
+          echo "=== Flet 版本 ==="
+          flet --version
       
       - name: Build APK
-        run: flet build apk --release
+        run: |
+          echo "=== 开始构建 ==="
+          flet build apk
+          echo "=== 构建完成 ==="
       
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: flet-app-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+      
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-error-log
+          path: build/
